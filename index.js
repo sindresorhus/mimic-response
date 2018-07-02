@@ -19,12 +19,11 @@ const knownProps = [
 ];
 
 module.exports = (fromStream, toStream) => {
-	const toProps = Object.keys(toStream);
 	const fromProps = new Set(Object.keys(fromStream).concat(knownProps));
 
 	for (const prop of fromProps) {
 		// Don't overwrite existing properties
-		if (toProps.indexOf(prop) !== -1) {
+		if (prop in toStream) {
 			continue;
 		}
 
