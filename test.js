@@ -15,7 +15,7 @@ test.before(async () => {
 	});
 });
 
-test(async t => {
+test('normal', async t => {
 	const response = await pify(http.get, {errorFirst: false})(server.url);
 	response.unicorn = '🦄';
 	response.getContext = function () {
@@ -25,6 +25,26 @@ test(async t => {
 	const toStream = new stream.PassThrough();
 	m(response, toStream);
 
+	t.is(toStream.statusCode, 200);
+	t.is(toStream.unicorn, '🦄');
+	t.is(toStream.getContext(), response.getContext());
+});
+
+test('do not overwrite prototype properties', async t => {
+	const response = await pify(http.get, {errorFirst: false})(server.url);
+	response.unicorn = '🦄';
+	response.getContext = function () {
+		return this;
+	};
+	const origOn = response.on;
+	response.on = function (name, handler) {
+		return origOn.call(this, name, handler);
+	};
+
+	const toStream = new stream.PassThrough();
+	m(response, toStream);
+
+	t.is(Object.keys(toStream).indexOf('on'), -1);
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
 	t.is(toStream.getContext(), response.getContext());
