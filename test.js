@@ -10,8 +10,8 @@ let server;
 test.before(async () => {
 	server = await createTestServer();
 
-	server.get('/', (req, res) => {
-		res.send('');
+	server.get('/', (request, response) => {
+		response.send('');
 	});
 });
 
@@ -44,7 +44,7 @@ test('do not overwrite prototype properties', async t => {
 	const toStream = new stream.PassThrough();
 	m(response, toStream);
 
-	t.is(Object.keys(toStream).indexOf('on'), -1);
+	t.false(Object.keys(toStream).includes('on'));
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
 	t.is(toStream.getContext(), response.getContext());
