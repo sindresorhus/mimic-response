@@ -18,15 +18,16 @@ const knownProps = [
 	'statusMessage'
 ];
 
-module.exports = (fromStream, toStream) => {
-	const fromProps = new Set(Object.keys(fromStream).concat(knownProps));
+/* eslint-disable no-var, prefer-arrow-callback */
+module.exports = function (fromStream, toStream) {
+	var fromProps = new Set(Object.keys(fromStream).concat(knownProps));
 
-	for (const prop of fromProps) {
+	fromProps.forEach(function (prop) {
 		// Don't overwrite existing properties
 		if (prop in toStream) {
-			continue;
+			return;
 		}
 
 		toStream[prop] = typeof fromStream[prop] === 'function' ? fromStream[prop].bind(fromStream) : fromStream[prop];
-	}
+	});
 };
