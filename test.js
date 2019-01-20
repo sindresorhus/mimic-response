@@ -3,7 +3,7 @@ import http from 'http';
 import test from 'ava';
 import createTestServer from 'create-test-server';
 import pify from 'pify';
-import m from '.';
+import mimicResponse from '.';
 
 let server;
 
@@ -23,7 +23,7 @@ test('normal', async t => {
 	};
 
 	const toStream = new stream.PassThrough();
-	m(response, toStream);
+	mimicResponse(response, toStream);
 
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
@@ -36,13 +36,14 @@ test('do not overwrite prototype properties', async t => {
 	response.getContext = function () {
 		return this;
 	};
+
 	const origOn = response.on;
 	response.on = function (name, handler) {
 		return origOn.call(this, name, handler);
 	};
 
 	const toStream = new stream.PassThrough();
-	m(response, toStream);
+	mimicResponse(response, toStream);
 
 	t.false(Object.keys(toStream).includes('on'));
 	t.is(toStream.statusCode, 200);
