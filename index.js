@@ -33,4 +33,6 @@ module.exports = (fromStream, toStream) => {
 
 		toStream[prop] = typeof fromStream[prop] === 'function' ? fromStream[prop].bind(fromStream) : fromStream[prop];
 	}
+
+	return toStream;
 };
