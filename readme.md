@@ -2,13 +2,11 @@
 
 > Mimic a [Node.js HTTP response stream](https://nodejs.org/api/http.html#http_class_http_incomingmessage)
 
-
 ## Install
 
 ```
 $ npm install mimic-response
 ```
-
 
 ## Usage
 
@@ -24,7 +22,6 @@ mimicResponse(responseStream, myStream);
 console.log(myStream.statusCode);
 //=> 200
 ```
-
 
 ## API
 
@@ -42,12 +39,10 @@ Type: `Stream`
 
 Any stream.
 
-
 ## Related
 
 - [mimic-fn](https://github.com/sindresorhus/mimic-fn) - Make a function mimic another one
 - [clone-response](https://github.com/lukechilds/clone-response) - Clone a Node.js response stream
-
 
 ---
 

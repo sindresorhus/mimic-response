@@ -4,6 +4,7 @@
 	"description": "Mimic a Node.js HTTP response stream",
 	"license": "MIT",
 	"repository": "sindresorhus/mimic-response",
+	"funding": "https://github.com/sponsors/sindresorhus",
 	"author": {
 		"name": "Sindre Sorhus",
 		"email": "sindresorhus@gmail.com",
