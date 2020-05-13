@@ -12,10 +12,10 @@ test.before(async () => {
 	server = await createTestServer();
 
 	server.get('/', (_request, response) => {
-		response.write('');
+		response.write('a');
 
 		setTimeout(() => {
-			response.end('asdf');
+			response.end('sdf');
 		}, 2);
 	});
 });
