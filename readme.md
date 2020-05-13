@@ -34,6 +34,7 @@ const stream = require('stream');
 const mimicResponse = require('mimic-response');
 
 const responseStream = getHttpResponseStream();
+
 const myStream = new stream.PassThrough({
 	destroy(error, callback) {
 		responseStream.destroy();
@@ -45,7 +46,7 @@ const myStream = new stream.PassThrough({
 myStream.destroy();
 ```
 
-Please note that `myStream` nor `responseStream` never throws. The error is passed to the request instead.
+Please note that `myStream` and `responseStream` never throws. The error is passed to the request instead.
 
 **Note #2:** The `aborted` and `close` events are not proxied. You have to add them manually:
 
