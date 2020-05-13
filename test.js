@@ -3,6 +3,7 @@ import http from 'http';
 import test from 'ava';
 import createTestServer from 'create-test-server';
 import pify from 'pify';
+import pEvent from 'p-event';
 import mimicResponse from '.';
 
 let server;
@@ -10,8 +11,12 @@ let server;
 test.before(async () => {
 	server = await createTestServer();
 
-	server.get('/', (request, response) => {
-		response.send('');
+	server.get('/', (_request, response) => {
+		response.write('');
+
+		setTimeout(() => {
+			response.end('asdf');
+		}, 2);
 	});
 });
 
@@ -28,6 +33,12 @@ test('normal', async t => {
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
 	t.is(toStream.getContext(), response.getContext());
+	t.false(toStream.complete);
+
+	response.resume();
+	await pEvent(response, 'end');
+
+	t.true(toStream.complete);
 });
 
 test('do not overwrite prototype properties', async t => {
@@ -49,4 +60,10 @@ test('do not overwrite prototype properties', async t => {
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
 	t.is(toStream.getContext(), response.getContext());
+	t.false(toStream.complete);
+
+	response.resume();
+	await pEvent(response, 'end');
+
+	t.true(toStream.complete);
 });

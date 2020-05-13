@@ -27,6 +27,54 @@ console.log(myStream.statusCode);
 
 ### mimicResponse(from, to)
 
+**Note #1:** The `from.destroy(error)` function is not proxied. You have to call it manually:
+
+```js
+const stream = require('stream');
+const mimicResponse = require('mimic-response');
+
+const responseStream = getHttpResponseStream();
+const myStream = new stream.PassThrough({
+	destroy(error, callback) {
+		responseStream.destroy();
+
+		callback(error);
+	}
+});
+
+myStream.destroy();
+```
+
+Please note that `myStream` nor `responseStream` never throws. The error is passed to the request instead.
+
+**Note #2:** The `aborted` and `close` events are not proxied. You have to add them manually:
+
+```js
+const stream = require('stream');
+const mimicResponse = require('mimic-response');
+
+const responseStream = getHttpResponseStream();
+const myStream = new stream.PassThrough({
+	destroy(error, callback) {
+		responseStream.destroy();
+
+		callback(error);
+	}
+});
+
+responseStream.once('aborted', () => {
+	myStream.destroy();
+
+	myStream.emit('aborted');
+});
+
+responseStream.once('closed', () => {
+	myStream.emit('closed');
+});
+
+responseStream.pipe(myStream);
+```
+
 #### from
 
 Type: `Stream`
