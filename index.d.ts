@@ -10,7 +10,7 @@ Makes `toStream` include the properties from `fromStream`.
 @return The same object as `toStream`.
 */
 declare function mimicResponse<T extends NodeJS.ReadableStream>(
-	fromStream: IncomingMessage,
+	fromStream: IncomingMessage, // eslint-disable-line @typescript-eslint/prefer-readonly-parameter-types
 	toStream: T,
 ): T & IncomingMessage;
 

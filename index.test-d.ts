@@ -4,7 +4,9 @@ import stream = require('stream');
 import mimicResponse = require('.');
 
 class CustomStream extends stream.PassThrough {
-	readonly method = null;
+	get method() {
+		return null;
+	}
 }
 
 let responseStream!: http.IncomingMessage;
