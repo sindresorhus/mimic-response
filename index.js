@@ -6,7 +6,6 @@
 const knownProperties = [
 	'aborted',
 	'complete',
-	'destroy',
 	'headers',
 	'httpVersion',
 	'httpVersionMinor',
@@ -25,14 +24,34 @@ const knownProperties = [
 module.exports = (fromStream, toStream) => {
 	const fromProperties = new Set(Object.keys(fromStream).concat(knownProperties));
 
+	const properties = {};
+
 	for (const property of fromProperties) {
 		// Don't overwrite existing properties.
 		if (property in toStream) {
 			continue;
 		}
 
-		toStream[property] = typeof fromStream[property] === 'function' ? fromStream[property].bind(fromStream) : fromStream[property];
+		properties[property] = {
+			get() {
+				const value = fromStream[property];
+				const isFunction = typeof value === 'function';
+
+				return isFunction ? value.bind(fromStream) : value;
+			},
+			set(value) {
+				fromStream[property] = value;
+			},
+			enumerable: true,
+			configurable: false
+		};
 	}
+
+	Object.defineProperties(toStream, properties);
+
+	fromStream.once('aborted', () => {
+		toStream.emit('aborted');
+	});
 
 	return toStream;
 };

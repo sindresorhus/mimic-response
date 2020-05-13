@@ -12,6 +12,6 @@ Makes `toStream` include the properties from `fromStream`.
 declare function mimicResponse<T extends NodeJS.ReadableStream>(
 	fromStream: IncomingMessage,
 	toStream: T,
-): IncomingMessage & T;
+): T & IncomingMessage;
 
 export = mimicResponse;
