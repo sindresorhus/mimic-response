@@ -6,6 +6,7 @@ import pify from 'pify';
 import pEvent from 'p-event';
 import mimicResponse from '.';
 
+const nodejsMajorVersion = process.versions.node.split('.')[0];
 let server;
 
 test.before(async () => {
@@ -41,7 +42,6 @@ test('normal', async t => {
 	t.is(toStream.statusCode, 200);
 	t.is(toStream.unicorn, '🦄');
 	t.is(toStream.getContext(), response.getContext());
-	t.false(toStream.complete);
 
 	response.resume();
 	await pEvent(response, 'end');
@@ -72,6 +72,8 @@ test('do not overwrite prototype properties', async t => {
 
 	response.resume();
 	await pEvent(response, 'end');
+
+	await new Promise(resolve => setImmediate(resolve));
 
 	t.true(toStream.complete);
 });
@@ -104,13 +106,24 @@ test('`close` event', async t => {
 		const toStream = new stream.PassThrough({autoDestroy: false});
 		mimicResponse(response, toStream);
 
+		t.true(response.readable);
+
+		if (nodejsMajorVersion > 11) {
+			t.false(response.readableEnded);
+		}
+
 		response.pipe(toStream);
 		toStream.resume();
 
 		await pEvent(toStream, 'close');
 
-		t.true(response.readableEnded);
-		t.true(toStream.readableEnded);
+		t.false(response.readable);
+		t.false(toStream.readable);
+
+		if (nodejsMajorVersion > 11) {
+			t.true(response.readableEnded);
+			t.true(toStream.readableEnded);
+		}
 	}
 
 	{
@@ -119,12 +132,26 @@ test('`close` event', async t => {
 		const toStream = new stream.PassThrough({autoDestroy: false});
 		mimicResponse(response, toStream);
 
+		t.true(response.readable);
+
+		if (nodejsMajorVersion > 11) {
+			t.false(response.readableEnded);
+		}
+
 		response.pipe(toStream);
 		toStream.resume();
 
 		await pEvent(toStream, 'close');
 
-		t.false(response.readableEnded);
-		t.false(toStream.readableEnded);
+		if (nodejsMajorVersion < 12) {
+			t.false(response.readable);
+			t.true(toStream.readable);
+		} else if (nodejsMajorVersion < 13) {
+			t.true(response.readableEnded);
+			t.false(toStream.readableEnded);
+		} else {
+			t.false(response.readableEnded);
+			t.false(toStream.readableEnded);
+		}
 	}
 });

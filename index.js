@@ -61,12 +61,12 @@ module.exports = (fromStream, toStream) => {
 
 	fromStream.once('close', () => {
 		if (fromStream.complete) {
-			if (toStream.readableEnded) {
-				toStream.emit('close');
-			} else {
+			if (toStream.readable) {
 				toStream.once('end', () => {
 					toStream.emit('close');
 				});
+			} else {
+				toStream.emit('close');
 			}
 		} else {
 			toStream.emit('close');
