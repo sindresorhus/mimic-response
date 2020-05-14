@@ -22,6 +22,10 @@ const knownProperties = [
 ];
 
 module.exports = (fromStream, toStream) => {
+	if (toStream._readableState.autoDestroy) {
+		throw new Error('The second stream must have the `autoDestroy` option set to `false`');
+	}
+
 	const fromProperties = new Set(Object.keys(fromStream).concat(knownProperties));
 
 	const properties = {};
@@ -50,7 +54,23 @@ module.exports = (fromStream, toStream) => {
 	Object.defineProperties(toStream, properties);
 
 	fromStream.once('aborted', () => {
+		toStream.destroy();
+
 		toStream.emit('aborted');
+	});
+
+	fromStream.once('close', () => {
+		if (fromStream.complete) {
+			if (toStream.readableEnded) {
+				toStream.emit('close');
+			} else {
+				toStream.once('end', () => {
+					toStream.emit('close');
+				});
+			}
+		} else {
+			toStream.emit('close');
+		}
 	});
 
 	return toStream;
