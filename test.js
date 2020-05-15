@@ -47,6 +47,7 @@ test('normal', async t => {
 	await pEvent(response, 'end');
 
 	t.true(toStream.complete);
+	t.not(response._readableState, toStream._readableState);
 });
 
 test('do not overwrite prototype properties', async t => {

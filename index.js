@@ -26,7 +26,9 @@ module.exports = (fromStream, toStream) => {
 		throw new Error('The second stream must have the `autoDestroy` option set to `false`');
 	}
 
-	const fromProperties = new Set(Object.keys(fromStream).concat(knownProperties));
+	// Don't include Node.js internals
+	const fromStreamKeys = Object.keys(fromStream).filter(key => !key.startsWith('_'));
+	const fromProperties = new Set(fromStreamKeys.concat(knownProperties));
 
 	const properties = {};
 
