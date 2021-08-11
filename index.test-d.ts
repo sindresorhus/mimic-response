@@ -1,17 +1,17 @@
+import {IncomingMessage} from 'node:http';
+import {PassThrough as PassThroughStream} from 'node:stream';
 import {expectType} from 'tsd';
-import http = require('http');
-import stream = require('stream');
-import mimicResponse = require('.');
+import mimicResponse from './index.js';
 
-class CustomStream extends stream.PassThrough {
+class CustomStream extends PassThroughStream {
 	get method() {
 		return null;
 	}
 }
 
-let responseStream!: http.IncomingMessage;
-const myStream = new stream.PassThrough();
+let responseStream!: IncomingMessage;
+const myStream = new PassThroughStream();
 const myCustomStream = new CustomStream();
 
-expectType<stream.PassThrough & http.IncomingMessage>(mimicResponse(responseStream, myStream));
-expectType<CustomStream & http.IncomingMessage>(mimicResponse(responseStream, myCustomStream));
+expectType<PassThroughStream & IncomingMessage>(mimicResponse(responseStream, myStream));
+expectType<CustomStream & IncomingMessage>(mimicResponse(responseStream, myCustomStream));
