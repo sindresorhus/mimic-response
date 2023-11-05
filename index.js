@@ -53,7 +53,6 @@ export default function mimicResponse(fromStream, toStream) {
 
 	fromStream.once('aborted', () => {
 		toStream.destroy();
-
 		toStream.emit('aborted');
 	});
 

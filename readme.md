@@ -4,8 +4,8 @@
 
 ## Install
 
-```
-$ npm install mimic-response
+```sh
+npm install mimic-response
 ```
 
 ## Usage
@@ -62,17 +62,5 @@ Any stream.
 
 ## Related
 
-- [mimic-fn](https://github.com/sindresorhus/mimic-fn) - Make a function mimic another one
 - [clone-response](https://github.com/lukechilds/clone-response) - Clone a Node.js response stream
-
----
-
-<div align="center">
-	<b>
-		<a href="https://tidelift.com/subscription/pkg/npm-mimic-response?utm_source=npm-mimic-response&utm_medium=referral&utm_campaign=readme">Get professional support for this package with a Tidelift subscription</a>
-	</b>
-	<br>
-	<sub>
-		Tidelift helps make open source sustainable for maintainers while giving companies<br>assurances about security, maintenance, and licensing for their dependencies.
-	</sub>
-</div>
+- [mimic-function](https://github.com/sindresorhus/mimic-function) - Make a function mimic another one
